@@ -1,0 +1,38 @@
+import React, {useState, useContext} from "react";
+import { AlertContext } from "../context/alert/alertContext";
+import { FirebaseContext } from "../context/firebase/firebaseContext";
+
+export default function Form(){
+
+   const [value, setValue] = useState('') 
+   const {show} = useContext(AlertContext)
+   const firebase = useContext(FirebaseContext)
+console.log(show)
+   const submitHandler = event => {
+      event.preventDefault()
+
+      if(value.trim()){
+         firebase.addNote(value.trim()).then(() => {
+            show('Заметка была создана', 'success')  
+         }).catch(() => {
+            show('Что-то пошло не так', 'danger') 
+         })
+         setValue('')
+      }else{
+         show('Введите название заметки')
+      }
+   }
+
+   return(
+   <form onSubmit={submitHandler}>
+      <div className="form-group">
+         <input type="text" 
+         className="form-control" 
+         placeholder="Введите название заметки" 
+         value={value}
+         onChange={e => setValue(e.target.value)}
+         />
+      </div>
+   </form>
+   )
+}
